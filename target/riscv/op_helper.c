@@ -781,3 +781,36 @@ done:
 }
 
 #endif /* !CONFIG_USER_ONLY */
+
+/* 添加的dma指令 */
+void HELPER(dma)(CPURISCVState *env, target_ulong dst_addr,
+                 target_ulong src_addr, target_ulong grain)
+{
+    int n;
+    switch (grain) {
+        case 0: n = 8; break;
+        case 1: n = 16; break;
+        case 2: n = 32; break;
+        default:
+            fprintf(stderr, "dma: invalid grain %ld\n", (long)grain);
+            return;
+    }
+
+    /* 使用栈上的可变长数组（最大 32x32，安全） */
+    float temp[32 * 32];
+    uint32_t val;
+
+    /* 从源地址读取矩阵 */
+    for (int i = 0; i < n * n; i++) {
+        val = cpu_ldl_data(env, src_addr + i * sizeof(float));
+        memcpy(&temp[i], &val, sizeof(float));
+    }
+
+    /* 转置并写入目标地址 */
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            memcpy(&val, &temp[j * n + i], sizeof(uint32_t));
+            cpu_stl_data(env, dst_addr + (i * n + j) * sizeof(float), val);
+        }
+    }
+}

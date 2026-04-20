@@ -12,7 +12,9 @@ CRT_SCRIPT = $(TEST_SRC)/crt/crt.S \
 LDFLAGS = -T $(LINK_SCRIPT)
 CFLAGS += -I$(TEST_SRC)/crt/ \
           -g -Og -static \
-          -march=rv64gcv -mabi=lp64d \
+          --sysroot=/usr/lib/picolibc/riscv64-unknown-elf \
+          -isystem /usr/lib/picolibc/riscv64-unknown-elf/include \
+          -march=rv64gc -mabi=lp64d \
           -mcmodel=medany \
           -Wa,--noexecstack \
           -fvisibility=hidden -nostdlib \
