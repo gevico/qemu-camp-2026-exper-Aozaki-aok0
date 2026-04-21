@@ -1234,3 +1234,14 @@ static bool trans_dma(DisasContext *ctx, arg_dma *a)
     gen_helper_dma(tcg_env, dst, src, grain);
     return true;
 }
+
+/* 添加sort指令 */
+static bool trans_sort(DisasContext *ctx, arg_sort *a)
+{
+    TCGv len = get_gpr(ctx, a->rd, EXT_NONE);   // k
+    TCGv arr = get_gpr(ctx, a->rs1, EXT_NONE);  // array base
+    TCGv dummy = get_gpr(ctx, a->rs2, EXT_NONE);// n (unused)
+
+    gen_helper_sort(tcg_env, len, arr, dummy);
+    return true;
+}

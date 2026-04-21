@@ -814,3 +814,38 @@ void HELPER(dma)(CPURISCVState *env, target_ulong dst_addr,
         }
     }
 }
+
+/* 添加的sort指令 */
+void HELPER(sort)(CPURISCVState *env, target_ulong len,
+                  target_ulong arr_addr, target_ulong dummy)
+{
+    if (len == 0 || len > 1024) {   // 安全边界检查
+        return;
+    }
+
+    /* 在栈上分配临时数组（最大 1024 个 int） */
+    int32_t temp[1024];
+
+    /* 从内存读取数组 */
+    for (target_ulong i = 0; i < len; i++) {
+        temp[i] = (int32_t)cpu_ldl_data(env, arr_addr + i * sizeof(int32_t));
+    }
+
+    /* 冒泡排序 */
+    for (target_ulong i = 0; i < len - 1; i++) {
+        for (target_ulong j = 0; j < len - i - 1; j++) {
+            if (temp[j] > temp[j + 1]) {
+                int32_t tmp = temp[j];
+                temp[j] = temp[j + 1];
+                temp[j + 1] = tmp;
+            }
+        }
+    }
+
+    /* 写回内存 */
+    for (target_ulong i = 0; i < len; i++) {
+        cpu_stl_data(env, arr_addr + i * sizeof(int32_t), (uint32_t)temp[i]);
+    }
+
+    (void)dummy; // 明确标记未使用
+}

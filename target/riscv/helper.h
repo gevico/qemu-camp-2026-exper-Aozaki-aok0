@@ -1292,3 +1292,4 @@ DEF_HELPER_1(ssamoswap_disabled, void, env)
 
 /* 新添加的指令 */
 DEF_HELPER_4(dma, void, env, tl, tl, tl)
+DEF_HELPER_4(sort, void, env, tl, tl, tl)
