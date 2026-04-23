@@ -911,3 +911,14 @@ target_ulong HELPER(vdot)(CPURISCVState *env, target_ulong a_addr,
     }
     return (target_ulong)acc;
 }
+
+/* 添加的vrelu指令 */
+void HELPER(vrelu)(CPURISCVState *env, target_ulong dst_addr,
+                   target_ulong src_addr, target_ulong n)
+{
+    for (target_ulong i = 0; i < n; i++) {
+        int32_t val = (int32_t)cpu_ldl_data(env, src_addr + i * sizeof(int32_t));
+        int32_t out = (val > 0) ? val : 0;
+        cpu_stl_data(env, dst_addr + i * sizeof(int32_t), (uint32_t)out);
+    }
+}

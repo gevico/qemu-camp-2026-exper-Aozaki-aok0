@@ -1280,3 +1280,14 @@ static bool trans_vdot(DisasContext *ctx, arg_vdot *a)
     gen_set_gpr(ctx, a->rd, result); // 将结果写入 rd
     return true;
 }
+
+/* 添加vrelu指令 */
+static bool trans_vrelu(DisasContext *ctx, arg_vrelu *a)
+{
+    TCGv dst = get_gpr(ctx, a->rd, EXT_NONE);
+    TCGv src = get_gpr(ctx, a->rs1, EXT_NONE);
+    TCGv len = get_gpr(ctx, a->rs2, EXT_NONE);
+
+    gen_helper_vrelu(tcg_env, dst, src, len);
+    return true;
+}
