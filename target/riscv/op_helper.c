@@ -880,3 +880,21 @@ void HELPER(crush)(CPURISCVState *env, target_ulong dst_addr,
         cpu_stb_data(env, dst_addr + out_len - 1, last);
     }
 }
+
+/* 添加的expand指令 */
+void HELPER(expand)(CPURISCVState *env, target_ulong dst_addr,
+                    target_ulong src_addr, target_ulong n)
+{
+    if (n == 0) {
+        return;
+    }
+
+    for (target_ulong i = 0; i < n; i++) {
+        uint8_t byte = cpu_ldub_data(env, src_addr + i);
+        uint8_t low  = byte & 0x0F;
+        uint8_t high = (byte >> 4) & 0x0F;
+
+        cpu_stb_data(env, dst_addr + 2 * i, low);
+        cpu_stb_data(env, dst_addr + 2 * i + 1, high);
+    }
+}
