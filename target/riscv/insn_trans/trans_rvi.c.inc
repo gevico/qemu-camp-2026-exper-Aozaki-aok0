@@ -1267,3 +1267,16 @@ static bool trans_expand(DisasContext *ctx, arg_expand *a)
     gen_helper_expand(tcg_env, dst, src, len);
     return true;
 }
+
+/* 添加vdot指令 */
+static bool trans_vdot(DisasContext *ctx, arg_vdot *a)
+{
+    TCGv a_ptr = get_gpr(ctx, a->rs1, EXT_NONE);
+    TCGv b_ptr = get_gpr(ctx, a->rs2, EXT_NONE);
+    TCGv result = tcg_temp_new();   // 用于接收 helper 返回值
+
+    gen_helper_vdot(result, tcg_env, a_ptr, b_ptr);
+
+    gen_set_gpr(ctx, a->rd, result); // 将结果写入 rd
+    return true;
+}

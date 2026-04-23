@@ -898,3 +898,16 @@ void HELPER(expand)(CPURISCVState *env, target_ulong dst_addr,
         cpu_stb_data(env, dst_addr + 2 * i + 1, high);
     }
 }
+
+/* 添加的vdot指令 */
+target_ulong HELPER(vdot)(CPURISCVState *env, target_ulong a_addr,
+                          target_ulong b_addr)
+{
+    int64_t acc = 0;
+    for (int i = 0; i < 16; i++) {
+        int32_t a_val = (int32_t)cpu_ldl_data(env, a_addr + i * sizeof(int32_t));
+        int32_t b_val = (int32_t)cpu_ldl_data(env, b_addr + i * sizeof(int32_t));
+        acc += (int64_t)a_val * (int64_t)b_val;
+    }
+    return (target_ulong)acc;
+}
