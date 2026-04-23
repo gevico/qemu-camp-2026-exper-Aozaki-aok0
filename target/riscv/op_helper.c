@@ -849,3 +849,34 @@ void HELPER(sort)(CPURISCVState *env, target_ulong len,
 
     (void)dummy; // 明确标记未使用
 }
+
+/* 添加的crush指令 */
+void HELPER(crush)(CPURISCVState *env, target_ulong dst_addr,
+                   target_ulong src_addr, target_ulong n)
+{
+    if (n == 0) {
+        return;
+    }
+
+    uint8_t temp[512];  // 足够大（测题 n=10）
+    target_ulong out_len = (n + 1) / 2;
+
+    /* 从源地址读取 n 个字节 */
+    for (target_ulong i = 0; i < n; i++) {
+        temp[i] = cpu_ldub_data(env, src_addr + i);
+    }
+
+    /* 每两个字节打包成一个字节 */
+    for (target_ulong i = 0; i < n / 2; i++) {
+        uint8_t low  = temp[2 * i] & 0x0F;
+        uint8_t high = temp[2 * i + 1] & 0x0F;
+        uint8_t packed = low | (high << 4);
+        cpu_stb_data(env, dst_addr + i, packed);
+    }
+
+    /* 处理奇数个字节的情况 */
+    if (n & 1) {
+        uint8_t last = temp[n - 1] & 0x0F;
+        cpu_stb_data(env, dst_addr + out_len - 1, last);
+    }
+}

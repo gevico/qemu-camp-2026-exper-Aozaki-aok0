@@ -1245,3 +1245,14 @@ static bool trans_sort(DisasContext *ctx, arg_sort *a)
     gen_helper_sort(tcg_env, len, arr, dummy);
     return true;
 }
+
+/* 添加crush指令 */
+static bool trans_crush(DisasContext *ctx, arg_crush *a)
+{
+    TCGv dst = get_gpr(ctx, a->rd, EXT_NONE);
+    TCGv src = get_gpr(ctx, a->rs1, EXT_NONE);
+    TCGv len = get_gpr(ctx, a->rs2, EXT_NONE);
+
+    gen_helper_crush(tcg_env, dst, src, len);
+    return true;
+}
