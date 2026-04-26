@@ -951,3 +951,27 @@ target_ulong HELPER(vmax)(CPURISCVState *env, target_ulong src_addr,
     /* 符号扩展到 64 位，与 software_vmax 的 (long)(int)max 一致 */
     return (target_ulong)(int64_t)max_val;
 }
+
+/* 添加的gemm指令 */
+void HELPER(gemm)(CPURISCVState *env, target_ulong c_addr,
+                  target_ulong a_addr, target_ulong b_addr)
+{
+    int32_t a[16], b[16];
+
+    /* 读取矩阵 A 和 B */
+    for (int i = 0; i < 16; i++) {
+        a[i] = (int32_t)cpu_ldl_data(env, a_addr + i * sizeof(int32_t));
+        b[i] = (int32_t)cpu_ldl_data(env, b_addr + i * sizeof(int32_t));
+    }
+
+    /* 矩阵乘法 C = A * B */
+    for (int i = 0; i < 4; i++) {
+        for (int j = 0; j < 4; j++) {
+            int64_t acc = 0;
+            for (int k = 0; k < 4; k++) {
+                acc += (int64_t)a[i * 4 + k] * (int64_t)b[k * 4 + j];
+            }
+            cpu_stl_data(env, c_addr + (i * 4 + j) * sizeof(int32_t), (uint32_t)acc);
+        }
+    }
+}

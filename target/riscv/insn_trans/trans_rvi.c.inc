@@ -1314,3 +1314,14 @@ static bool trans_vmax(DisasContext *ctx, arg_vmax *a)
     gen_set_gpr(ctx, a->rd, result);
     return true;
 }
+
+/* 添加gemm指令 */
+static bool trans_gemm(DisasContext *ctx, arg_gemm *a)
+{
+    TCGv c   = get_gpr(ctx, a->rd,  EXT_NONE);
+    TCGv a_p = get_gpr(ctx, a->rs1, EXT_NONE);
+    TCGv b_p = get_gpr(ctx, a->rs2, EXT_NONE);
+
+    gen_helper_gemm(tcg_env, c, a_p, b_p);
+    return true;
+}
