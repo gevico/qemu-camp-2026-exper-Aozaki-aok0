@@ -1327,12 +1327,40 @@ static bool trans_gemm(DisasContext *ctx, arg_gemm *a)
 }
 
 /* 添加vadd指令 */
+// static bool trans_vadd(DisasContext *ctx, arg_vadd *a)
+// {
+//     TCGv c = get_gpr(ctx, a->rd,  EXT_NONE);
+//     TCGv a_ptr = get_gpr(ctx, a->rs1, EXT_NONE);
+//     TCGv b_ptr = get_gpr(ctx, a->rs2, EXT_NONE);
+
+//     gen_helper_vadd(tcg_env, c, a_ptr, b_ptr);
+//     return true;
+// }
+
 static bool trans_vadd(DisasContext *ctx, arg_vadd *a)
 {
-    TCGv c = get_gpr(ctx, a->rd,  EXT_NONE);
-    TCGv a_ptr = get_gpr(ctx, a->rs1, EXT_NONE);
-    TCGv b_ptr = get_gpr(ctx, a->rs2, EXT_NONE);
+    TCGv base_c = get_gpr(ctx, a->rd, EXT_NONE);
+    TCGv base_a = get_gpr(ctx, a->rs1, EXT_NONE);
+    TCGv base_b = get_gpr(ctx, a->rs2, EXT_NONE);
 
-    gen_helper_vadd(tcg_env, c, a_ptr, b_ptr);
+    TCGv_i32 tmp_a = tcg_temp_new_i32();
+    TCGv_i32 tmp_b = tcg_temp_new_i32();
+    TCGv addr = tcg_temp_new();
+
+    for (int i = 0; i < 16; i++) {
+        int offset = i * sizeof(int32_t);
+
+        tcg_gen_addi_tl(addr, base_a, offset);
+        tcg_gen_qemu_ld_i32(tmp_a, addr, ctx->mem_idx, MO_TEUL);
+
+        tcg_gen_addi_tl(addr, base_b, offset);
+        tcg_gen_qemu_ld_i32(tmp_b, addr, ctx->mem_idx, MO_TEUL);
+
+        tcg_gen_add_i32(tmp_a, tmp_a, tmp_b);
+
+        tcg_gen_addi_tl(addr, base_c, offset);
+        tcg_gen_qemu_st_i32(tmp_a, addr, ctx->mem_idx, MO_TEUL);
+    }
+
     return true;
 }

@@ -977,13 +977,13 @@ void HELPER(gemm)(CPURISCVState *env, target_ulong c_addr,
 }
 
 /* 添加的vadd指令 */
-void HELPER(vadd)(CPURISCVState *env, target_ulong c_addr,
-                  target_ulong a_addr, target_ulong b_addr)
-{
-    for (int i = 0; i < 16; i++) {
-        int32_t a = (int32_t)cpu_ldl_data(env, a_addr + i * sizeof(int32_t));
-        int32_t b = (int32_t)cpu_ldl_data(env, b_addr + i * sizeof(int32_t));
-        int32_t sum = a + b;   /* 有符号溢出自动回绕，符合测题要求 */
-        cpu_stl_data(env, c_addr + i * sizeof(int32_t), (uint32_t)sum);
-    }
-}
+// void HELPER(vadd)(CPURISCVState *env, target_ulong c_addr,
+//                   target_ulong a_addr, target_ulong b_addr)
+// {
+//     for (int i = 0; i < 16; i++) {
+//         int32_t a = (int32_t)cpu_ldl_data(env, a_addr + i * sizeof(int32_t));
+//         int32_t b = (int32_t)cpu_ldl_data(env, b_addr + i * sizeof(int32_t));
+//         int32_t sum = a + b;   /* 有符号溢出自动回绕，符合测题要求 */
+//         cpu_stl_data(env, c_addr + i * sizeof(int32_t), (uint32_t)sum);
+//     }
+// }
