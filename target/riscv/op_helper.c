@@ -922,3 +922,14 @@ void HELPER(vrelu)(CPURISCVState *env, target_ulong dst_addr,
         cpu_stl_data(env, dst_addr + i * sizeof(int32_t), (uint32_t)out);
     }
 }
+
+/* 添加的vscale指令 */
+void HELPER(vscale)(CPURISCVState *env, target_ulong dst_addr,
+                    target_ulong src_addr, target_ulong scale)
+{
+    for (int i = 0; i < 16; i++) {
+        int32_t val = (int32_t)cpu_ldl_data(env, src_addr + i * sizeof(int32_t));
+        int32_t out = (int32_t)((int64_t)val * (int64_t)scale);
+        cpu_stl_data(env, dst_addr + i * sizeof(int32_t), (uint32_t)out);
+    }
+}

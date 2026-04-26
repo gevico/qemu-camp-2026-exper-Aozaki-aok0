@@ -1291,3 +1291,14 @@ static bool trans_vrelu(DisasContext *ctx, arg_vrelu *a)
     gen_helper_vrelu(tcg_env, dst, src, len);
     return true;
 }
+
+/* 添加vscale指令 */
+static bool trans_vscale(DisasContext *ctx, arg_vscale *a)
+{
+    TCGv dst = get_gpr(ctx, a->rd, EXT_NONE);
+    TCGv src = get_gpr(ctx, a->rs1, EXT_NONE);
+    TCGv scale = get_gpr(ctx, a->rs2, EXT_NONE);
+
+    gen_helper_vscale(tcg_env, dst, src, scale);
+    return true;
+}
