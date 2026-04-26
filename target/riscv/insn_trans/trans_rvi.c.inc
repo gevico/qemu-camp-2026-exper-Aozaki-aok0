@@ -1325,3 +1325,14 @@ static bool trans_gemm(DisasContext *ctx, arg_gemm *a)
     gen_helper_gemm(tcg_env, c, a_p, b_p);
     return true;
 }
+
+/* 添加vadd指令 */
+static bool trans_vadd(DisasContext *ctx, arg_vadd *a)
+{
+    TCGv c = get_gpr(ctx, a->rd,  EXT_NONE);
+    TCGv a_ptr = get_gpr(ctx, a->rs1, EXT_NONE);
+    TCGv b_ptr = get_gpr(ctx, a->rs2, EXT_NONE);
+
+    gen_helper_vadd(tcg_env, c, a_ptr, b_ptr);
+    return true;
+}
