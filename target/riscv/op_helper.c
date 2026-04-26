@@ -933,3 +933,21 @@ void HELPER(vscale)(CPURISCVState *env, target_ulong dst_addr,
         cpu_stl_data(env, dst_addr + i * sizeof(int32_t), (uint32_t)out);
     }
 }
+
+/* 添加的vmax指令 */
+target_ulong HELPER(vmax)(CPURISCVState *env, target_ulong src_addr,
+                          target_ulong n)
+{
+    if (n == 0) {
+        return 0;
+    }
+    int32_t max_val = (int32_t)cpu_ldl_data(env, src_addr);
+    for (target_ulong i = 1; i < n; i++) {
+        int32_t val = (int32_t)cpu_ldl_data(env, src_addr + i * sizeof(int32_t));
+        if (val > max_val) {
+            max_val = val;
+        }
+    }
+    /* 符号扩展到 64 位，与 software_vmax 的 (long)(int)max 一致 */
+    return (target_ulong)(int64_t)max_val;
+}

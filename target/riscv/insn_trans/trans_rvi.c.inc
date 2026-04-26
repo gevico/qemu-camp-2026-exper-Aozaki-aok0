@@ -1302,3 +1302,15 @@ static bool trans_vscale(DisasContext *ctx, arg_vscale *a)
     gen_helper_vscale(tcg_env, dst, src, scale);
     return true;
 }
+
+/* 添加vmax指令 */
+static bool trans_vmax(DisasContext *ctx, arg_vmax *a)
+{
+    TCGv src = get_gpr(ctx, a->rs1, EXT_NONE);
+    TCGv len = get_gpr(ctx, a->rs2, EXT_NONE);
+    TCGv result = tcg_temp_new();
+
+    gen_helper_vmax(result, tcg_env, src, len);
+    gen_set_gpr(ctx, a->rd, result);
+    return true;
+}
