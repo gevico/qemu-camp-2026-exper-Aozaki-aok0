@@ -28,6 +28,7 @@
 #include "exec/translation-block.h"
 #include "exec/log.h"
 #include "semihosting/semihost.h"
+#include "profiler.h"
 
 #include "internals.h"
 
@@ -1303,6 +1304,7 @@ static void decode_opc(CPURISCVState *env, DisasContext *ctx)
 static void riscv_tr_init_disas_context(DisasContextBase *dcbase, CPUState *cs)
 {
     DisasContext *ctx = container_of(dcbase, DisasContext, base);
+    profiler_count_tb_trans();
     CPURISCVState *env = cpu_env(cs);
     RISCVCPUClass *mcc = RISCV_CPU_GET_CLASS(cs);
     RISCVCPU *cpu = RISCV_CPU(cs);
@@ -1350,6 +1352,7 @@ static void riscv_tr_init_disas_context(DisasContextBase *dcbase, CPUState *cs)
 
 static void riscv_tr_tb_start(DisasContextBase *db, CPUState *cpu)
 {
+    gen_helper_profiler_count_tb_exec(tcg_env);
 }
 
 static void riscv_tr_insn_start(DisasContextBase *dcbase, CPUState *cpu)
@@ -1371,6 +1374,7 @@ static void riscv_tr_translate_insn(DisasContextBase *dcbase, CPUState *cpu)
     CPURISCVState *env = cpu_env(cpu);
 
     decode_opc(env, ctx);
+    gen_helper_profiler_count_insn(tcg_env);
     ctx->base.pc_next += ctx->cur_insn_len;
 
     /*

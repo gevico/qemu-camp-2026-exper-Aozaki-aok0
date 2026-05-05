@@ -1301,3 +1301,8 @@ DEF_HELPER_4(vscale, void, env, tl, tl, tl)
 DEF_HELPER_3(vmax, tl, env, tl, tl)
 DEF_HELPER_4(gemm, void, env, tl, tl, tl)
 // DEF_HELPER_4(vadd, void, env, tl, tl, tl)
+
+/* Profiler helpers */
+DEF_HELPER_1(profiler_count_insn, void, env)
+DEF_HELPER_2(profiler_count_xg233ai, void, env, i32)
+DEF_HELPER_1(profiler_count_tb_exec, void, env)

@@ -1232,6 +1232,7 @@ static bool trans_dma(DisasContext *ctx, arg_dma *a)
     TCGv grain = get_gpr(ctx, a->rs2, EXT_NONE);
 
     gen_helper_dma(tcg_env, dst, src, grain);
+    gen_helper_profiler_count_xg233ai(tcg_env, tcg_constant_i32(0));
     return true;
 }
 
@@ -1243,6 +1244,7 @@ static bool trans_sort(DisasContext *ctx, arg_sort *a)
     TCGv dummy = get_gpr(ctx, a->rs2, EXT_NONE);// n (unused)
 
     gen_helper_sort(tcg_env, len, arr, dummy);
+    gen_helper_profiler_count_xg233ai(tcg_env, tcg_constant_i32(1));
     return true;
 }
 
@@ -1254,6 +1256,7 @@ static bool trans_crush(DisasContext *ctx, arg_crush *a)
     TCGv len = get_gpr(ctx, a->rs2, EXT_NONE);
 
     gen_helper_crush(tcg_env, dst, src, len);
+    gen_helper_profiler_count_xg233ai(tcg_env, tcg_constant_i32(2));
     return true;
 }
 
@@ -1265,6 +1268,7 @@ static bool trans_expand(DisasContext *ctx, arg_expand *a)
     TCGv len = get_gpr(ctx, a->rs2, EXT_NONE);
 
     gen_helper_expand(tcg_env, dst, src, len);
+    gen_helper_profiler_count_xg233ai(tcg_env, tcg_constant_i32(3));
     return true;
 }
 
@@ -1276,6 +1280,7 @@ static bool trans_vdot(DisasContext *ctx, arg_vdot *a)
     TCGv result = tcg_temp_new();   // 用于接收 helper 返回值
 
     gen_helper_vdot(result, tcg_env, a_ptr, b_ptr);
+    gen_helper_profiler_count_xg233ai(tcg_env, tcg_constant_i32(4));
 
     gen_set_gpr(ctx, a->rd, result); // 将结果写入 rd
     return true;
@@ -1289,6 +1294,7 @@ static bool trans_vrelu(DisasContext *ctx, arg_vrelu *a)
     TCGv len = get_gpr(ctx, a->rs2, EXT_NONE);
 
     gen_helper_vrelu(tcg_env, dst, src, len);
+    gen_helper_profiler_count_xg233ai(tcg_env, tcg_constant_i32(5));
     return true;
 }
 
@@ -1300,6 +1306,7 @@ static bool trans_vscale(DisasContext *ctx, arg_vscale *a)
     TCGv scale = get_gpr(ctx, a->rs2, EXT_NONE);
 
     gen_helper_vscale(tcg_env, dst, src, scale);
+    gen_helper_profiler_count_xg233ai(tcg_env, tcg_constant_i32(6));
     return true;
 }
 
@@ -1311,6 +1318,7 @@ static bool trans_vmax(DisasContext *ctx, arg_vmax *a)
     TCGv result = tcg_temp_new();
 
     gen_helper_vmax(result, tcg_env, src, len);
+    gen_helper_profiler_count_xg233ai(tcg_env, tcg_constant_i32(7));
     gen_set_gpr(ctx, a->rd, result);
     return true;
 }
@@ -1323,6 +1331,7 @@ static bool trans_gemm(DisasContext *ctx, arg_gemm *a)
     TCGv b_p = get_gpr(ctx, a->rs2, EXT_NONE);
 
     gen_helper_gemm(tcg_env, c, a_p, b_p);
+    gen_helper_profiler_count_xg233ai(tcg_env, tcg_constant_i32(8));
     return true;
 }
 
@@ -1362,5 +1371,6 @@ static bool trans_vadd(DisasContext *ctx, arg_vadd *a)
         tcg_gen_qemu_st_i32(tmp_a, addr, ctx->mem_idx, MO_TEUL);
     }
 
+    gen_helper_profiler_count_xg233ai(tcg_env, tcg_constant_i32(9));
     return true;
 }

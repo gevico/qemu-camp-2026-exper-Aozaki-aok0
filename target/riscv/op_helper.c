@@ -987,3 +987,21 @@ void HELPER(gemm)(CPURISCVState *env, target_ulong c_addr,
 //         cpu_stl_data(env, c_addr + i * sizeof(int32_t), (uint32_t)sum);
 //     }
 // }
+
+/* Profiler helpers */
+#include "profiler.h"
+
+void HELPER(profiler_count_insn)(CPURISCVState *env)
+{
+    profiler_count_insn();
+}
+
+void HELPER(profiler_count_xg233ai)(CPURISCVState *env, uint32_t idx)
+{
+    profiler_count_xg233ai(idx);
+}
+
+void HELPER(profiler_count_tb_exec)(CPURISCVState *env)
+{
+    profiler_count_tb_exec();
+}
